@@ -2,9 +2,22 @@
 <html>
 <head>
   <title>midioutTest</title>
+  <style >
+      [wrapper]{
+          margin:100px ; 
+          font-size: 20px ;
+      }
+  </style>
 </head>
 <body>
-    <div msg></div>
+    <div wrapper>
+        <span >
+            <b>MIDI Outs</b>
+        </span>
+        </br>
+        </br>
+        <div id='msg'></div>
+    </div>
     <script >
         var sleep = n => new Promise(resolve => setTimeout(resolve, n));
         var outputs ; 
@@ -29,7 +42,11 @@
 
         function _onMIDISuccess(midiAccess) {
             var midi = midiAccess;
+
             outputs = midi.outputs ;
+            for (let output of outputs.values())
+                document.getElementById('msg').innerHTML += output.name+'</br>' ; 
+
             outputMIDIEvent() ; 
             console.log(outputs);
         }
