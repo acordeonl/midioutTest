@@ -4,6 +4,45 @@
   <title>midioutTest</title>
 </head>
 <body>
-    holis
+    <div msg></div>
+    <script >
+        var sleep = n => new Promise(resolve => setTimeout(resolve, n));
+        var outputs ; 
+        var cnt = 0 ; 
+
+        function outputMIDIEvent() {
+            let cmd = cnt%2 === 0? 9 : 8  ; 
+            for (let output of this.outputs.values()) {
+                // if(output.name !== 'Midi Through Port-0')
+                //     continue ; 
+                let outputEvent = [] ; 
+                outputEvent[0] = cmd << 4 ; 
+                outputEvent[0] |= 0 ; 
+                outputEvent[1] = 69 ; 
+                outputEvent[2] = 100 ; 
+                output.send(outputEvent); 
+                console.log(output.name,cmd);
+            }
+            setTimeout( outputMIDIEvent , 2000 );
+        }
+
+        function _onMIDISuccess(midiAccess) {
+            var midi = midiAccess;
+            outputs = midi.outputs ;
+            outputMIDIEvent() ; 
+            console.log(outputs);
+        }
+        function _onMIDIFailure (e) {
+            // when we get a failed response, run this code
+            console.log("No access to MIDI devices or your browser doesn't support WebMIDI API. Please use WebMIDIAPIShim " + e);
+        }
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess({
+                sysex: false // this defaults to 'false' and we won't be covering sysex in this article.
+            }).then(_onMIDISuccess, _onMIDIFailure);
+        } else {
+            alert("No MIDI support in your browser.");
+        }
+    </script>
 </body>
 </html>
